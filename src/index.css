@@ -1,0 +1,156 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 98%;
+    --foreground: 240 10% 3.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+
+    --primary: 172 55% 45%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+
+    --accent: 172 55% 93%;
+    --accent-foreground: 172 55% 25%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 172 55% 45%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 172 55% 45%;
+    --primary-foreground: 240 5.9% 10%;
+
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+
+    --accent: 172 55% 15%;
+    --accent-foreground: 172 55% 85%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 172 55% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+/* Glass morphism styles */
+.glass {
+  @apply bg-white/70 dark:bg-black/50 backdrop-blur-md border border-white/20 dark:border-black/20 shadow-lg;
+}
+
+/* Interactive elements animations */
+.hover-scale {
+  @apply transition-transform duration-300 hover:scale-[1.02];
+}
+
+/* Streak calendar styles */
+.streak-day {
+  @apply relative rounded-md flex items-center justify-center transition-all duration-300;
+  position: relative;
+}
+
+.streak-day-completed {
+  @apply bg-primary text-primary-foreground;
+  position: relative;
+  z-index: 1;
+  border-radius: 0.375rem;
+}
+
+/* Create connected streak effect */
+.streak-day-completed::before,
+.streak-day-completed::after {
+  content: '';
+  position: absolute;
+  background-color: hsl(var(--primary));
+  z-index: -1;
+}
+
+/* Horizontal connector (to previous day) */
+.streak-day-completed::before {
+  height: 100%;
+  width: 50%;
+  top: 0;
+  left: -10%;
+}
+
+/* Horizontal connector (to next day) */
+.streak-day-completed::after {
+  height: 100%;
+  width: 50%;
+  top: 0;
+  right: -10%;
+}
+
+/* Preserve rounded corners for start/end days of streak */
+.streak-day-start {
+  border-radius: 0.375rem 0 0 0.375rem !important;
+}
+
+.streak-day-end {
+  border-radius: 0 0.375rem 0.375rem 0 !important;
+}
+
+.streak-day-middle {
+  border-radius: 0 !important;
+}
+
+/* Hide connectors for start/end days in appropriate directions */
+.streak-day-start::before {
+  display: none;
+}
+
+.streak-day-end::after {
+  display: none;
+}
