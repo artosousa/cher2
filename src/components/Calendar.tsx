@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { format, eachDayOfInterval, startOfMonth, endOfMonth, isToday, isSameMonth } from 'date-fns';
+import { format, eachDayOfInterval, startOfMonth, endOfMonth, isToday, isSameMonth, startOfWeek, endOfWeek, addDays } from 'date-fns';
 import { cn } from '@/lib/utils';
 
 interface CalendarProps {
@@ -18,40 +18,52 @@ const Calendar = ({
 }: CalendarProps) => {
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
-  const monthDays = eachDayOfInterval({ start: monthStart, end: monthEnd });
-
-  // Convert ISO strings to Date objects for comparison
-  const completedDateObjects = completedDates.map(dateStr => new Date(dateStr));
   
+  // Get the start of the week that contains the first day of the month
+  const calendarStart = startOfWeek(monthStart);
+  // Get the end of the week that contains the last day of the month
+  const calendarEnd = endOfWeek(monthEnd);
+  
+  // Generate all days to display in the calendar grid
+  const calendarDays = eachDayOfInterval({ 
+    start: calendarStart, 
+    end: calendarEnd 
+  });
+
+  // Improved date comparison to handle timezone issues
   const isDateCompleted = (date: Date) => {
-    // Check against actual completed dates
-    return completedDateObjects.some(completedDate => 
-      completedDate.getFullYear() === date.getFullYear() && 
-      completedDate.getMonth() === date.getMonth() && 
-      completedDate.getDate() === date.getDate()
-    );
+    // Format the date to YYYY-MM-DD for comparison
+    const dateString = format(date, 'yyyy-MM-dd');
+    
+    // Compare against actual completed dates
+    return completedDates.some(completedDate => {
+      const completedDateString = completedDate.split('T')[0];
+      return completedDateString === dateString;
+    });
   };
 
   // Function to determine if a date has a completed day before it
   const hasCompletedBefore = (day: Date) => {
     const prevDay = new Date(day);
     prevDay.setDate(prevDay.getDate() - 1);
-    return completedDateObjects.some(completedDate => 
-      completedDate.getFullYear() === prevDay.getFullYear() && 
-      completedDate.getMonth() === prevDay.getMonth() && 
-      completedDate.getDate() === prevDay.getDate()
-    );
+    const prevDayString = format(prevDay, 'yyyy-MM-dd');
+    
+    return completedDates.some(completedDate => {
+      const completedDateString = completedDate.split('T')[0];
+      return completedDateString === prevDayString;
+    });
   };
 
   // Function to determine if a date has a completed day after it
   const hasCompletedAfter = (day: Date) => {
     const nextDay = new Date(day);
     nextDay.setDate(nextDay.getDate() + 1);
-    return completedDateObjects.some(completedDate => 
-      completedDate.getFullYear() === nextDay.getFullYear() && 
-      completedDate.getMonth() === nextDay.getMonth() && 
-      completedDate.getDate() === nextDay.getDate()
-    );
+    const nextDayString = format(nextDay, 'yyyy-MM-dd');
+    
+    return completedDates.some(completedDate => {
+      const completedDateString = completedDate.split('T')[0];
+      return completedDateString === nextDayString;
+    });
   };
 
   // Function to determine streak position
@@ -64,7 +76,7 @@ const Calendar = ({
     if (!hasBeforeCompleted && hasAfterCompleted) return 'streak-day-start';
     if (hasBeforeCompleted && !hasAfterCompleted) return 'streak-day-end';
     if (hasBeforeCompleted && hasAfterCompleted) return 'streak-day-middle';
-    return ''; // Isolated completed day (no connections)
+    return 'streak-day-isolated'; // Isolated completed day (no connections)
   };
 
   const handleDateClick = (day: Date) => {
@@ -89,7 +101,7 @@ const Calendar = ({
       </div>
       
       <div className="grid grid-cols-7 gap-1 sm:gap-2">
-        {monthDays.map((day, i) => {
+        {calendarDays.map((day, i) => {
           const isCompleted = isDateCompleted(day);
           const streakPositionClass = getStreakPosition(day);
           

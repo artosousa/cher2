@@ -23,6 +23,12 @@ const CalendarView = () => {
     setCurrentMonth(prevMonth => addMonths(prevMonth, 1));
   };
   
+  // For debugging
+  console.log('Current date:', new Date().toISOString());
+  console.log('Current local date:', format(new Date(), 'yyyy-MM-dd'));
+  console.log('Completed dates:', completedDates);
+  console.log('Completed dates formatted:', completedDates.map(d => d.split('T')[0]));
+  
   return (
     <Layout>
       <div className="mb-8">

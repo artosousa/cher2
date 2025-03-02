@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -146,11 +147,22 @@
   border-radius: 0 !important;
 }
 
+/* Isolated day (single completed day) */
+.streak-day-isolated {
+  border-radius: 0.375rem !important;
+}
+
 /* Hide connectors for start/end days in appropriate directions */
 .streak-day-start::before {
   display: none;
 }
 
 .streak-day-end::after {
+  display: none;
+}
+
+/* Hide both connectors for isolated days */
+.streak-day-isolated::before,
+.streak-day-isolated::after {
   display: none;
 }

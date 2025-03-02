@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { CalendarRange, Plus } from 'lucide-react';
 import Layout from '@/components/Layout';
@@ -7,12 +7,13 @@ import ListCard from '@/components/ListCard';
 import { format, formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { toast } from "sonner";
+import { auth } from '@/lib/firebase';
 
 const Index = () => {
   const navigate = useNavigate();
   const todoService = window.todoService;
   
-  const { data: lists = [], isLoading } = useQuery({
+  const { data: lists = [], isLoading, error } = useQuery({
     queryKey: ['lists'],
     queryFn: () => todoService.getLists(),
   });
@@ -21,6 +22,14 @@ const Index = () => {
     queryKey: ['todos'],
     queryFn: () => todoService.getTodos(),
   });
+  
+  // Handle any errors from the queries
+  useEffect(() => {
+    if (error) {
+      console.error('Error fetching data:', error);
+      toast.error('Failed to load your lists. Please try again later.');
+    }
+  }, [error]);
   
   const getListStats = (listId: string) => {
     const listTodos = todos.filter((todo: any) => todo.listId === listId);
