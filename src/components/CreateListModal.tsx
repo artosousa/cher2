@@ -118,7 +118,7 @@ const CreateListModal = ({ onCreateList }: CreateListModalProps) => {
           <button
             type="submit"
             disabled={!title.trim() || isSubmitting}
-            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg px-4 py-3 font-medium transition-colors disabled:opacity-50 mt-4"
+            className="w-full bg-primary hover:bg-primary hover:opacity-[0.9] text-primary-foreground rounded-lg px-4 py-3 font-medium transition-colors disabled:opacity-50 mt-4"
           >
             {isSubmitting ? 'Creating...' : 'Create List'}
           </button>

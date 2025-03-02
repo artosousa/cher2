@@ -54,7 +54,7 @@ const TodoList = ({ todos, onAddTodo, onToggleTodo, onDeleteTodo, listId }: Todo
         <button 
           type="submit"
           disabled={!newTodoText.trim()}
-          className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg p-3 transition-colors disabled:opacity-50"
+          className="bg-primary hover:bg-primary hover:opacity-[0.9] text-primary-foreground rounded-lg p-3 transition-colors disabled:opacity-50"
         >
           <Plus size={20} />
         </button>

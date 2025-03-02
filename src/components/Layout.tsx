@@ -36,7 +36,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <header className="border-b bg-white">
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
           <Link to="/" className="text-xl font-bold">
-            Todo Streaks
+            CherList
           </Link>
           <UserProfile user={user} />
         </div>

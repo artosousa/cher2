@@ -73,7 +73,7 @@ const Index = () => {
           </p>
           <button
             onClick={() => navigate('/create-list')}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg px-6 py-3 font-medium transition-colors flex items-center justify-center mx-auto"
+            className="bg-primary hover:bg-primary hover:opacity-[0.9] text-primary-foreground rounded-lg px-6 py-3 font-medium transition-colors flex items-center justify-center mx-auto"
           >
             <Plus size={18} className="mr-2" />
             Create a List
