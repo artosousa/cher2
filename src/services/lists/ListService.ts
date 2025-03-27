@@ -177,14 +177,41 @@ export class ListService extends BaseService {
   // Calendar data
   async getCompletedDates(): Promise<string[]> {
     try {
-      const lists = await this.getLists();
+      if (!this.checkAuth()) return [];
+      
+      const uid = auth.currentUser?.uid;
       const completedDates = new Set<string>();
       
+      // First, get all completed dates from lists for backward compatibility
+      const lists = await this.getLists();
       lists.forEach(list => {
         if (list.lastCompletedDate) {
           completedDates.add(list.lastCompletedDate.split('T')[0]);
         }
       });
+      
+      // Now, get all completed dates from individual tasks
+      const todosRef = collection(db, 'todos');
+      const q = query(
+        todosRef, 
+        where("completed", "==", true),
+        where("userId", "==", uid)
+      );
+      
+      try {
+        const snapshot = await getDocs(q);
+        
+        snapshot.docs.forEach(doc => {
+          const data = doc.data();
+          if (data.completedAt) {
+            // Convert Firestore timestamp to date string
+            const completedDate = data.completedAt.toDate().toISOString().split('T')[0];
+            completedDates.add(completedDate);
+          }
+        });
+      } catch (error) {
+        console.error('Error getting completed todos:', error);
+      }
       
       return Array.from(completedDates);
     } catch (error) {

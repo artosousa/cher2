@@ -17,7 +17,7 @@ const CalendarListView = () => {
   const navigate = useNavigate();
   const todoService = window.todoService;
   
-  const { data: completedDates = [] } = useQuery({
+  const { data: completedDates = [], isLoading: isLoadingDates } = useQuery({
     queryKey: ['completedDates'],
     queryFn: () => todoService.getCompletedDates(),
   });

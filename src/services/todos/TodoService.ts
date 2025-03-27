@@ -1,3 +1,4 @@
+
 import { BaseService } from '../base/BaseService';
 import { Todo } from '../models/todoModels';
 import { 
@@ -11,9 +12,10 @@ import {
   query, 
   where,
   serverTimestamp,
-  DocumentData
+  DocumentData,
+  Timestamp
 } from 'firebase/firestore';
-import { db } from '../../lib/firebase';
+import { db, auth } from '../../lib/firebase';
 import { toast } from 'sonner';
 import { ListService } from '../lists/ListService';
 
@@ -27,12 +29,22 @@ export class TodoService extends BaseService {
 
   async getTodos(listId?: string): Promise<Todo[]> {
     try {
+      if (!this.checkAuth()) return [];
+      
+      const uid = auth.currentUser?.uid;
       let todosQuery;
       
       if (listId) {
-        todosQuery = query(collection(db, 'todos'), where('listId', '==', listId));
+        todosQuery = query(
+          collection(db, 'todos'), 
+          where('listId', '==', listId),
+          where('userId', '==', uid)
+        );
       } else {
-        todosQuery = collection(db, 'todos');
+        todosQuery = query(
+          collection(db, 'todos'),
+          where('userId', '==', uid)
+        );
       }
       
       const snapshot = await getDocs(todosQuery);
@@ -43,6 +55,7 @@ export class TodoService extends BaseService {
           id: doc.id,
           text: data.text,
           completed: data.completed,
+          completedAt: data.completedAt ? data.completedAt.toDate().toISOString() : null,
           createdAt: data.createdAt.toDate().toISOString(),
           listId: data.listId
         };
@@ -56,11 +69,16 @@ export class TodoService extends BaseService {
   
   async addTodo(listId: string, text: string): Promise<Todo> {
     try {
+      if (!this.checkAuth()) throw new Error('Authentication required');
+      
+      const uid = auth.currentUser?.uid;
+      
       const newTodo = {
         text,
         completed: false,
         createdAt: serverTimestamp(),
-        listId
+        listId,
+        userId: uid
       };
       
       const docRef = await addDoc(collection(db, 'todos'), newTodo);
@@ -83,6 +101,7 @@ export class TodoService extends BaseService {
         id: docRef.id,
         text: data.text,
         completed: data.completed,
+        completedAt: null,
         createdAt: data.createdAt.toDate().toISOString(),
         listId: data.listId
       };
@@ -105,11 +124,23 @@ export class TodoService extends BaseService {
       
       const todoData = todoSnap.data();
       const listId = todoData.listId;
+      const currentlyCompleted = todoData.completed;
+      
+      // Prepare the update object
+      const updateData: any = {
+        completed: !currentlyCompleted
+      };
+      
+      // If we're marking as completed, add completedAt timestamp
+      if (!currentlyCompleted) {
+        updateData.completedAt = serverTimestamp();
+      } else {
+        // If uncompleting, remove the completedAt field
+        updateData.completedAt = null;
+      }
       
       // Toggle the completed status
-      await updateDoc(todoRef, {
-        completed: !todoData.completed
-      });
+      await updateDoc(todoRef, updateData);
       
       // Invalidate todos query
       this.queryClient.invalidateQueries({ queryKey: ['todos'] });
@@ -217,5 +248,16 @@ export class TodoService extends BaseService {
     } catch (error) {
       console.error('Error updating list progress:', error);
     }
+  }
+  
+  // Make sure we correctly use the protected method from BaseService
+  protected getLocalDateOnlyString(): string {
+    const now = new Date();
+    return now.toISOString().split('T')[0];
+  }
+  
+  // Use the protected method from BaseService
+  protected getLocalDateString(): string {
+    return super.getLocalDateString();
   }
 }

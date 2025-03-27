@@ -3,6 +3,7 @@ export interface Todo {
   id: string;
   text: string;
   completed: boolean;
+  completedAt: string | null;
   createdAt: string;
   listId: string;
 }

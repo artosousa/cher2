@@ -10,7 +10,7 @@ const CalendarView = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const todoService = window.todoService;
   
-  const { data: completedDates = [] } = useQuery({
+  const { data: completedDates = [], isLoading } = useQuery({
     queryKey: ['completedDates'],
     queryFn: () => todoService.getCompletedDates(),
   });
@@ -54,11 +54,17 @@ const CalendarView = () => {
         </button>
       </div>
       
-      <Calendar 
-        completedDates={completedDates} 
-        currentMonth={currentMonth}
-        className="mb-8"
-      />
+      {isLoading ? (
+        <div className="flex justify-center py-12">
+          <div className="glass rounded-lg px-4 py-2 animate-pulse-light">Loading your streaks...</div>
+        </div>
+      ) : (
+        <Calendar 
+          completedDates={completedDates} 
+          currentMonth={currentMonth}
+          className="mb-8"
+        />
+      )}
       
       <div className="mt-8 glass rounded-xl p-5">
         <h3 className="text-lg font-medium mb-4">Activity Stats</h3>

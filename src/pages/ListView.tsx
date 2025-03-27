@@ -103,12 +103,12 @@ const ListView = () => {
           </button>
         </div>
         
-        {list.currentStreak > 0 && (
+        {/* {list.currentStreak > 0 && (
           <div className="inline-flex items-center gap-2 bg-accent/50 px-3 py-1.5 rounded-full text-sm font-medium mt-3">
             <Calendar size={14} className="text-primary" />
             <span>{list.currentStreak} day streak</span>
           </div>
-        )}
+        )} */}
       </div>
       
       <div className="grid grid-cols-1 gap-4">

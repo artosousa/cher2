@@ -59,18 +59,18 @@ const ListCard = ({
               {completedCount}/{tasksCount} tasks
             </span>
             <span className="text-muted-foreground">
-              Updated {lastUpdated}
+              {lastUpdated}
             </span>
           </div>
           
-          {currentStreak > 0 && (
+          {/* {currentStreak > 0 && (
             <div className="flex items-center gap-1.5 text-primary font-medium">
               <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
                 <Flame size={12} className="text-primary" />
               </div>
               <span>{currentStreak} day streak</span>
             </div>
-          )}
+          )} */}
         </CardFooter>
       </Card>
     </Link>
